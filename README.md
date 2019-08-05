@@ -11,4 +11,8 @@ The PCL library doesn't support pure 2D points. You have to use 3D points with a
  many algorithm like centroid, ICP, ransac etc.. But it doesn't work with normal estimation due to your constant component (all normal are equal to (0,0,1). 
  My implementation solve this problem by ignoring the z component.
  
+ Here you can see the problem with pcl 3d normal estimation: 
+ ![problem_normal](https://user-images.githubusercontent.com/22777836/62474444-30ee8100-b7a3-11e9-9ee8-de2866f65ec8.png)
+
+ 
  
