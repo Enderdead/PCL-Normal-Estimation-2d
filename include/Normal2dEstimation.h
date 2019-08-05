@@ -66,6 +66,9 @@ private:
                                float &nx, float &ny, float &nz) const;
 
     bool computePointNormal2d (boost::shared_ptr<std::vector<int>>& indices,
+                               float &nx, float &ny, float &nz, float& curvature) const;
+
+    bool computePointNormal2d (boost::shared_ptr<std::vector<int>>& indices,
                                Eigen::Vector3f &line_parameters) const;
 
     // Remet le normal dans le bon sens

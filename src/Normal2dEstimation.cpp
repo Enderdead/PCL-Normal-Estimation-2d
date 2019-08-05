@@ -132,7 +132,7 @@ void Normal2dEstimation::compute(const pcl::PointCloud<pcl::Normal>::Ptr& normal
 
             this->computePointNormal2d(nn_indices,
                                        normal_cloud->points[idx].normal_x, normal_cloud->points[idx].normal_y,
-                                       normal_cloud->points[idx].normal_z);
+                                       normal_cloud->points[idx].normal_z, normal_cloud->points[idx].curvature);
 
             this->flipNormalTowardsViewpoint(_in_cloud->points[(*_indices)[idx]],
                                              normal_cloud->points[idx].normal_x, normal_cloud->points[idx].normal_y,
@@ -152,7 +152,7 @@ void Normal2dEstimation::compute(const pcl::PointCloud<pcl::Normal>::Ptr& normal
 
             this->computePointNormal2d(nn_indices,
                                        normal_cloud->points[idx].normal_x, normal_cloud->points[idx].normal_y,
-                                       normal_cloud->points[idx].normal_z);
+                                       normal_cloud->points[idx].normal_z, normal_cloud->points[idx].curvature);
 
             this->flipNormalTowardsViewpoint(_in_cloud->points[(*_indices)[idx]],
                                              normal_cloud->points[idx].normal_x, normal_cloud->points[idx].normal_y,
@@ -161,7 +161,6 @@ void Normal2dEstimation::compute(const pcl::PointCloud<pcl::Normal>::Ptr& normal
     }
 
 }
-
 
 
 bool Normal2dEstimation::computePointNormal2d (boost::shared_ptr<std::vector<int>> &indices,
@@ -196,6 +195,43 @@ bool Normal2dEstimation::computePointNormal2d (boost::shared_ptr<std::vector<int
     nx = result(0);
     ny = result(1);
     nz = 0.0;
+    return true;
+
+}
+
+bool Normal2dEstimation::computePointNormal2d (boost::shared_ptr<std::vector<int>>& indices,
+                           float &nx, float &ny, float &nz, float& curvature) const {
+    if (indices->size () < 2)
+    {
+        nx = ny = nz = curvature = std::numeric_limits<float>::quiet_NaN ();
+        return false;
+    }
+    if (indices->size()==2){
+        double norm, vect_x, vect_y;
+        vect_x = _in_cloud->points[(*indices)[0]].x - _in_cloud->points[(*indices)[1]].x;
+        vect_y = _in_cloud->points[(*indices)[0]].y - _in_cloud->points[(*indices)[1]].y;
+        norm = std::pow(std::pow(vect_x,2.0)+std::pow(vect_y,2.0), 0.5);
+        vect_x /= norm;
+        vect_y /= norm;
+        nx = -vect_y;
+        ny = vect_x;
+        nz = 0.0;
+        curvature = 0.0;
+        return true;
+    }
+
+
+    // Get the plane normal and surface curvature
+    PCA2D pca;
+
+    pca.setInputCloud(_in_cloud);
+    pca.setIndices(indices);
+    auto result = pca.getEigenVectors().col(1);
+    auto result2 = pca.getEigenVectors();
+    nx = result(0);
+    ny = result(1);
+    nz = 0.0;
+    curvature = pca.getEigenValues()(1) /  (pca.getEigenValues()(0)  + pca.getEigenValues()(1) );
     return true;
 
 }
@@ -254,6 +290,8 @@ void Normal2dEstimation::flipNormalTowardsViewpoint (const Point &point, float& 
         z *= -1;
     }
 }
+
+
 
 
 
