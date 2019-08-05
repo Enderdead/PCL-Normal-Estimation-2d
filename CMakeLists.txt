@@ -22,5 +22,5 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 
 #PointXYNormal.cpp PointXYNormal.h
-add_executable(norm_2d main.cpp )
+add_executable(norm_2d main.cpp include/PCA2D.h src/PCA2D.cpp include/Normal2dEstimation.h src/Normal2dEstimation.cpp)
 target_link_libraries(norm_2d ${PCL_LIBRARIES}  ${Boost_LIBRARIES})
