@@ -11,25 +11,18 @@
 #include <pcl/filters/extract_indices.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
-#include <pcl/sample_consensus/ransac.h>
-#include <pcl/sample_consensus/sac_model_plane.h>
-#include <pcl/sample_consensus/sac_model_sphere.h>
-#include <pcl/sample_consensus/sac_model_line.h>
 #include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl/segmentation/extract_clusters.h>
 #include <pcl/point_types.h>
 #include <pcl/features/normal_3d.h>
 #include <algorithm>
 #include <Eigen/Dense>
 #include <pcl/common/pca.h>
 #include <typeinfo>
-#include <pcl/io/pcd_io.h>
 
 #include "./include/Normal2dEstimation.h"
 
 
-int main(int argc, char* argv[]){
+int main(){
 
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
