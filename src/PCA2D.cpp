@@ -67,3 +67,40 @@ void PCA2D::setIndices(const boost::shared_ptr<std::vector<int>>& indices) {
     _computed = false;
     _indices->insert( _indices->begin(), indices->cbegin(), indices->cend());
 }
+
+void PCA2D::setIndices(const std::vector<int>& indices) {
+    _computed = false;
+    _indices->insert( _indices->begin(), indices.cbegin(), indices.cend());
+
+}
+
+
+
+void PCA2D::project(const Point & input, Point& projection) {
+    Eigen::Vector2f demean_input = {input.x - _mean(0),input.y - _mean(1)};
+    auto proj_result = _eigen_vectors.transpose() * demean_input;
+    projection.x = proj_result(0); projection.y = proj_result(1); projection.z=0;
+}
+
+void PCA2D::project(const ConstPtrCloud& in_cloud, PtrCloud& out_cloud){
+    if (in_cloud->is_dense)
+    {
+        out_cloud->resize (in_cloud->size ());
+        for (size_t i = 0; i < in_cloud->size (); ++i)
+            this->project (in_cloud->points[i], out_cloud->points[i]);
+    }
+    else
+    {
+        pcl::PointXYZ p;
+        for (size_t i = 0; i < in_cloud->size (); ++i)
+        {
+            if (!pcl_isfinite (in_cloud->points[i].x) ||
+                !pcl_isfinite (in_cloud->points[i].y) ||
+                !pcl_isfinite (in_cloud->points[i].z))
+                continue;
+            project (in_cloud->points[i], p);
+            out_cloud->points.push_back (p);
+        }
+    }
+
+}

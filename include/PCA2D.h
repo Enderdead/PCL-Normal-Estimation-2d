@@ -36,6 +36,9 @@ public:
     void setIndices(const pcl::PointIndicesPtr& indices);
     void setIndices(const pcl::PointIndicesConstPtr& indices);
     void setIndices(const boost::shared_ptr<std::vector<int>>& indices);
+    void setIndices(const std::vector<int>& indices);
+
+
     Eigen::Vector2f getMean() {
         if(!_computed) this->initCompute();
         return _mean;
