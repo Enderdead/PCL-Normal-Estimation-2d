@@ -29,28 +29,28 @@ typedef boost::shared_ptr<std::vector<int> > IndicesPtr;
 class Normal2dEstimation {
 public:
 
-    Normal2dEstimation(double search_radius=0.0, unsigned int k=0) : _search_radius(search_radius), _k(k), _indices(new std::vector<int>), _kd_tree(nullptr), _in_cloud(nullptr), _view_point(0,0,0) {}
+    Normal2dEstimation(double search_radius=0.0, unsigned int k=0) : m_search_radius(search_radius), m_k(k), m_indices(new std::vector<int>), m_kd_tree(nullptr), m_in_cloud(nullptr), m_view_point(0,0,0) {}
 
 
     void compute(const PtrCloud& normal_cloud) const;
 
     void compute(const pcl::PointCloud<pcl::Normal>::Ptr& normal_cloud) const;
 
-    void setViewPoint(const Point& origin)  {_view_point = origin;}
+    void setViewPoint(const Point& origin)  {m_view_point = origin;}
 
-    Point getViewPoint() const {return _view_point;}
+    Point getViewPoint() const {return m_view_point;}
 
-    void setRadiusSearch(double search_radius) {_search_radius = search_radius;}
+    void setRadiusSearch(double search_radius) {m_search_radius = search_radius;}
 
-    void setSearchMethod(const PtrkdTree& kdtree) {_kd_tree = kdtree;}
+    void setSearchMethod(const PtrkdTree& kdtree) {m_kd_tree = kdtree;}
 
-    void setKSearch(unsigned int k) {_k =k;}
+    void setKSearch(unsigned int k) {m_k =k;}
 
-    int getKSearch() const {return _k;}
+    int getKSearch() const {return m_k;}
 
     void setInputCloud(const ConstPtrCloud& cloud);
 
-    ConstPtrCloud getInputCloud() const {return _in_cloud;}
+    ConstPtrCloud getInputCloud() const {return m_in_cloud;}
 
     void setIndices(const pcl::PointIndices::Ptr& indices);
 
@@ -79,15 +79,15 @@ private:
 
 
 
-    double _search_radius;
-    unsigned int _k;
+    double m_search_radius;
+    unsigned int m_k;
 
-    IndicesPtr _indices;
-    PtrkdTree _kd_tree;
-    ConstPtrCloud _in_cloud;
+    IndicesPtr m_indices;
+    PtrkdTree m_kd_tree;
+    ConstPtrCloud m_in_cloud;
 
 
-    Point _view_point;
+    Point m_view_point;
 };
 
 

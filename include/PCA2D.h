@@ -24,7 +24,7 @@ typedef boost::shared_ptr<std::vector<int> > IndicesPtr;
 class PCA2D {
 public:
 
-    PCA2D() : _computed(false), _indices(new std::vector<int>), _cloud(nullptr){}
+    PCA2D() : m_computed(false), m_indices(new std::vector<int>), m_cloud(nullptr){}
 
 
     void initCompute();
@@ -40,18 +40,18 @@ public:
 
 
     Eigen::Vector2f getMean() {
-        if(!_computed) this->initCompute();
-        return _mean;
+        if(!m_computed) this->initCompute();
+        return m_mean;
     }
 
     Eigen::Matrix2f getEigenVectors() {
-        if(!_computed) this->initCompute();
-        return _eigen_vectors;
+        if(!m_computed) this->initCompute();
+        return m_eigen_vectors;
     }
 
     Eigen::Vector2f getEigenValues() {
-        if(!_computed) this->initCompute();
-        return _eigen_values;
+        if(!m_computed) this->initCompute();
+        return m_eigen_values;
     }
 
     void project(const Point & input, Point& projection);
@@ -62,13 +62,13 @@ public:
 private:
 
 
-    bool _computed;
-    IndicesPtr _indices;
-    ConstPtrCloud _cloud;
+    bool m_computed;
+    IndicesPtr m_indices;
+    ConstPtrCloud m_cloud;
 
-    Eigen::Vector2f _mean;
-    Eigen::Matrix2f _eigen_vectors;
-    Eigen::Vector2f _eigen_values;
+    Eigen::Vector2f m_mean;
+    Eigen::Matrix2f m_eigen_vectors;
+    Eigen::Vector2f m_eigen_values;
 
 };
 

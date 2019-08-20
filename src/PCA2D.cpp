@@ -6,22 +6,24 @@
 
 
 void PCA2D::initCompute() {
-    assert(("You have to set a cloud before ask any result !", _cloud ));
+    if(!m_cloud){
+        throw std::runtime_error("You have to set a cloud before ask any result !");
+    }
 
 
     pcl::CentroidPoint<Point> centroid;
     // Compute mean
-    _mean = Eigen::Vector2f::Zero ();
+    m_mean = Eigen::Vector2f::Zero ();
     Eigen::Vector4f temp_mean;
-    compute3DCentroid (*_cloud, *_indices, temp_mean);
-    _mean(0) = temp_mean(0);
-    _mean(1) = temp_mean(1);
+    compute3DCentroid (*m_cloud, *m_indices, temp_mean);
+    m_mean(0) = temp_mean(0);
+    m_mean(1) = temp_mean(1);
 
 
     // Compute demeanished cloud
     Eigen::MatrixXf cloud_demean;
-    demeanPointCloud (*_cloud, *_indices, temp_mean, cloud_demean);
-    assert (cloud_demean.cols () == int (_indices->size ()));
+    demeanPointCloud (*m_cloud, *m_indices, temp_mean, cloud_demean);
+    assert (cloud_demean.cols () == int (m_indices->size ()));
     // Compute the product cloud_demean * cloud_demean^T
     Eigen::Matrix2f alpha = static_cast<Eigen::Matrix2f> (cloud_demean.topRows<2> () * cloud_demean.topRows<2> ().transpose ());
 
@@ -30,55 +32,55 @@ void PCA2D::initCompute() {
     // Organize eigenvectors and eigenvalues in ascendent order
     for (int i = 0; i < 2; ++i)
     {
-        _eigen_values[i] = evd.eigenvalues ()[1-i];
-        _eigen_vectors.col (i) = evd.eigenvectors ().col (1-i);
+        m_eigen_values[i] = evd.eigenvalues ()[1-i];
+        m_eigen_vectors.col (i) = evd.eigenvectors ().col (1-i);
     }
     // If not basis only then compute the coefficients
 
-    _computed = true;
+    m_computed = true;
 
 }
 
 
 void PCA2D::setInputCloud(const ConstPtrCloud& cloud) {
-    _computed = false;
-    _cloud = cloud;
+    m_computed = false;
+    m_cloud = cloud;
 
 }
 
 void PCA2D::setIndices(const pcl::PointIndices& indices) {
-    _computed = false;
-    _indices->clear();
-    _indices->insert( _indices->begin(), indices.indices.cbegin(), indices.indices.cend());
+    m_computed = false;
+    m_indices->clear();
+    m_indices->insert(m_indices->begin(), indices.indices.cbegin(), indices.indices.cend());
 }
 void PCA2D::setIndices(const pcl::PointIndicesPtr& indices) {
-    _computed = false;
-    _indices->insert( _indices->begin(), indices->indices.cbegin(), indices->indices.cend());
+    m_computed = false;
+    m_indices->insert( m_indices->begin(), indices->indices.cbegin(), indices->indices.cend());
 
 }
 void PCA2D::setIndices(const pcl::PointIndicesConstPtr& indices) {
-    _computed = false;
-    _indices->insert( _indices->begin(), indices->indices.cbegin(), indices->indices.cend());
+    m_computed = false;
+    m_indices->insert( m_indices->begin(), indices->indices.cbegin(), indices->indices.cend());
 
 }
 
 
 void PCA2D::setIndices(const boost::shared_ptr<std::vector<int>>& indices) {
-    _computed = false;
-    _indices->insert( _indices->begin(), indices->cbegin(), indices->cend());
+    m_computed = false;
+    m_indices->insert( m_indices->begin(), indices->cbegin(), indices->cend());
 }
 
 void PCA2D::setIndices(const std::vector<int>& indices) {
-    _computed = false;
-    _indices->insert( _indices->begin(), indices.cbegin(), indices.cend());
+    m_computed = false;
+    m_indices->insert( m_indices->begin(), indices.cbegin(), indices.cend());
 
 }
 
 
 
 void PCA2D::project(const Point & input, Point& projection) {
-    Eigen::Vector2f demean_input = {input.x - _mean(0),input.y - _mean(1)};
-    auto proj_result = _eigen_vectors.transpose() * demean_input;
+    Eigen::Vector2f demean_input = {input.x - m_mean(0),input.y - m_mean(1)};
+    auto proj_result = m_eigen_vectors.transpose() * demean_input;
     projection.x = proj_result(0); projection.y = proj_result(1); projection.z=0;
 }
 
